@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 void main() {
   runApp(const MyApp());
@@ -49,26 +50,28 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  Offset _offset = Offset(0.4, 0.7); // new
 
   void _incrementCounter() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
       _counter++;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    return Transform(
+      // Transform widget
+      transform: Matrix4.identity()
+        ..setEntry(3, 2, 0.001) // perspective
+        ..rotateX(_offset.dy)
+        ..rotateY(_offset.dx),
+      alignment: FractionalOffset.center,
+      child: _defaultApp(context),
+    );
+  }
+
+  _defaultApp(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -101,6 +104,73 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
+            ),
+            Transform.rotate(
+              angle: -45 * (pi / 180.0),
+              child: ElevatedButton(
+                child: const Text("Rotated button"),
+                onPressed: () {},
+              ),
+            ),
+            Transform(
+              transform: Matrix4.rotationZ(-45 * (pi / 180.0)),
+              alignment: Alignment.center,
+              child: ElevatedButton(
+                child: const Text("Rotated button"),
+                onPressed: () {},
+              ),
+            ),
+            Transform.scale(
+              scale: 2.0,
+              child: ElevatedButton(
+                child: const Text("scaled up"),
+                onPressed: () {},
+              ),
+            ),
+            Transform(
+              transform: Matrix4.identity()..scale(2.0, 2.0),
+              alignment: Alignment.center,
+              child: ElevatedButton(
+                child: const Text("scaled up (matrix)"),
+                onPressed: () {},
+              ),
+            ),
+            Transform.translate(
+              offset: const Offset(100, 300),
+              child: ElevatedButton(
+                child: const Text("translated to bottom"),
+                onPressed: () {},
+              ),
+            ),
+            Transform(
+              transform: Matrix4.translationValues(100, 300, 0),
+              child: ElevatedButton(
+                child: const Text("translated to bottom (matrix)"),
+                onPressed: () {},
+              ),
+            ),
+            Transform.translate(
+              offset: const Offset(70, 200),
+              child: Transform.rotate(
+                angle: -45 * (pi / 180.0),
+                child: Transform.scale(
+                  scale: 2.0,
+                  child: ElevatedButton(
+                    child: const Text("multiple transformations"),
+                    onPressed: () {},
+                  ),
+                ),
+              ),
+            ),
+            Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.translationValues(70, 200, 0)
+                ..rotateZ(-45 * (pi / 180.0))
+                ..scale(2.0, 2.0),
+              child: ElevatedButton(
+                child: const Text("multiple transformations (matrix)"),
+                onPressed: () {},
+              ),
             ),
           ],
         ),
